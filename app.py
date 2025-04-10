@@ -58,11 +58,5 @@ def edit(id):
 
 if __name__ == "__main__":
     import os
-    if not os.path.exists(DB):
-        with sqlite3.connect(DB) as con:
-            con.execute("""CREATE TABLE contracts (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT, address TEXT, email TEXT, phone TEXT,
-                start_date TEXT, due_months TEXT, notes TEXT, renewal_date TEXT
-            )""")
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
