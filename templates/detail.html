@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <a href="/" class="btn btn-secondary mb-3">← Back</a>
+    <h2>{{ contract['name'] }}</h2>
+    <p><strong>Address:</strong> {{ contract['address'] }}</p>
+    <p><strong>Email:</strong> {{ contract['email'] }}</p>
+    <p><strong>Phone:</strong> {{ contract['phone'] }}</p>
+    <p><strong>Start Date:</strong> {{ contract['start_date'] }}</p>
+    <p><strong>Due Months:</strong> {{ contract['due_months'] }}</p>
+    <p><strong>Notes:</strong> {{ contract['notes'] }}</p>
+    <p><strong>Renewal Date:</strong> {{ contract['renewal_date'] }}</p>
+    <a href="/edit/{{ contract['id'] }}" class="btn btn-warning">Edit</a>
+    <a href="/delete/{{ contract['id'] }}" class="btn btn-danger">Delete</a>
+</div>
+</body>
+</html>
