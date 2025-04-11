@@ -73,11 +73,6 @@ def delete(id):
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
     con = get_db()
-    contract = con.execute("SELECT * FROM contracts WHERE id=?", (id,)).fetchone()
-
-    if contract is None:
-        return "Contract not found", 404
-
     if request.method == "POST":
         data = request.form
         con.execute("""
@@ -89,7 +84,8 @@ def edit(id):
         ))
         con.commit()
         return redirect("/")
-
+    
+    contract = con.execute("SELECT * FROM contracts WHERE id=?", (id,)).fetchone()
     return render_template("form.html", contract=contract)
 
 if __name__ == "__main__":
