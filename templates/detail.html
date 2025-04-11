@@ -1,23 +1,106 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Client Details</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>{{ contract.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            padding: 2rem;
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .field {
+            margin-bottom: 1.2rem;
+        }
+        .field span {
+            font-weight: bold;
+        }
+        .icon {
+            margin-right: 6px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #fff;
+            margin-right: 5px;
+        }
+        .badge-green {
+            background-color: #4CAF50;
+        }
+        .badge-yellow {
+            background-color: #FFC107;
+            color: #000;
+        }
+        .badge-red {
+            background-color: #F44336;
+        }
+        .notes {
+            background: #f5f5f5;
+            border-left: 4px solid #2196F3;
+            padding: 1rem;
+            white-space: pre-wrap;
+        }
+        a.back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-4">
-    <a href="/" class="btn btn-secondary mb-3">← Back</a>
-    <h2>{{ contract['name'] }}</h2>
-    <p><strong>Address:</strong> {{ contract['address'] }}</p>
-    <p><strong>Email:</strong> {{ contract['email'] }}</p>
-    <p><strong>Phone:</strong> {{ contract['phone'] }}</p>
-    <p><strong>Start Date:</strong> {{ contract['start_date'] }}</p>
-    <p><strong>Due Months:</strong> {{ contract['due_months'] }}</p>
-    <p><strong>Notes:</strong> {{ contract['notes'] }}</p>
-    <p><strong>Renewal Date:</strong> {{ contract['renewal_date'] }}</p>
-    <a href="/edit/{{ contract['id'] }}" class="btn btn-warning">Edit</a>
-    <a href="/delete/{{ contract['id'] }}" class="btn btn-danger">Delete</a>
-</div>
+    <h1>🧾 {{ contract.name }}</h1>
+
+    <div class="field"><span class="icon">📍</span><span>Address:</span> {{ contract.address }}</div>
+    <div class="field"><span class="icon">📧</span><span>Email:</span> {{ contract.email }}</div>
+    <div class="field"><span class="icon">📞</span><span>Phone:</span> {{ contract.phone }}</div>
+
+    <div class="field">
+        <span class="icon">📅</span><span>Start Date:</span>
+        {{ contract.start_date }}
+    </div>
+
+    <div class="field">
+        <span class="icon">🔁</span><span>Renewal Date:</span>
+        {% if contract.renewal_date %}
+            {% set renewal_month = contract.renewal_date.strftime('%m') %}
+            {% set current_month = now.strftime('%m') %}
+            {% if renewal_month == current_month %}
+                <span class="badge badge-red">{{ contract.renewal_date }}</span>
+            {% elif renewal_month|int - current_month|int <= 2 %}
+                <span class="badge badge-yellow">{{ contract.renewal_date }}</span>
+            {% else %}
+                <span class="badge badge-green">{{ contract.renewal_date }}</span>
+            {% endif %}
+        {% else %}
+            <span class="badge badge-yellow">Not Set</span>
+        {% endif %}
+    </div>
+
+    <div class="field">
+        <span class="icon">🛠️</span><span>Due Months:</span>
+        {% for month in contract.due_months.split(',') %}
+            <span class="badge badge-yellow">{{ month.strip() }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="field">
+        <span class="icon">📝</span><span>Notes:</span>
+        <div class="notes">{{ contract.notes }}</div>
+    </div>
+
+    <a class="back-button" href="/">← Back to Clients</a>
 </body>
 </html>
+
