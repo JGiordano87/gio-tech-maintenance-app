@@ -1,15 +1,36 @@
 
 from flask import Flask, render_template, request, redirect, url_for
-import sqlite3
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 EMAIL_ADDRESS = "johnny.giordano87@gmail.com"
-EMAIL_PASSWORD = "bxde vovt hqkb aidx"
+EMAIL_PASSWORD = "bxd..."
 
 app = Flask(__name__)
-DB = "contracts.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+from sqlalchemy import Column, Integer, String, Date, Text
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy(app)
+
+class Contract(db.Model):
+    __tablename__ = 'contracts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(200))
+    email = db.Column(db.String(100))
+    phone = db.Column(db.String(50))
+    start_date = db.Column(db.Date)
+    due_months = db.Column(db.String(100))
+    notes = db.Column(db.Text)
+    renewal_date = db.Column(db.Date)
 
 def send_email_reminder(to_email, subject, body):
     msg = MIMEMultipart()
@@ -23,33 +44,32 @@ def send_email_reminder(to_email, subject, body):
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.send_message(msg)
 
-def get_db():
-    conn = sqlite3.connect(DB)
-    conn.row_factory = sqlite3.Row
-    return conn
-
 @app.route("/")
 def index():
-    con = get_db()
-    contracts = con.execute("SELECT id, name FROM contracts").fetchall()
+    contracts = Contract.query.with_entities(Contract.id, Contract.name).all()
     return render_template("index.html", contracts=contracts)
 
 @app.route("/contract/<int:id>")
 def view_contract(id):
-    con = get_db()
-    contract = con.execute("SELECT * FROM contracts WHERE id=?", (id,)).fetchone()
+    contract = Contract.query.get_or_404(id)
     return render_template("detail.html", contract=contract)
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
     if request.method == "POST":
         data = request.form
-        con = get_db()
-        con.execute("""INSERT INTO contracts (name, address, email, phone, start_date, due_months, notes, renewal_date)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                      (data["name"], data["address"], data["email"], data["phone"],
-                       data["start_date"], data["due_months"], data["notes"], data["renewal_date"]))
-        con.commit()
+        new_contract = Contract(
+            name=data["name"],
+            address=data["address"],
+            email=data["email"],
+            phone=data["phone"],
+            start_date=data["start_date"],
+            due_months=data["due_months"],
+            notes=data["notes"],
+            renewal_date=data["renewal_date"]
+        )
+        db.session.add(new_contract)
+        db.session.commit()
         return redirect("/")
     return render_template("form.html")
 
@@ -65,47 +85,47 @@ def test_email():
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    con = get_db()
-    con.execute("DELETE FROM contracts WHERE id=?", (id,))
-    con.commit()
+    contract = Contract.query.get_or_404(id)
+    db.session.delete(contract)
+    db.session.commit()
     return redirect("/")
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
-    con = get_db()
+    contract = Contract.query.get_or_404(id)
     if request.method == "POST":
         data = request.form
-        con.execute("""
-            UPDATE contracts SET name=?, address=?, email=?, phone=?, start_date=?, due_months=?, notes=?, renewal_date=?
-            WHERE id=?
-        """, (
-            data["name"], data["address"], data["email"], data["phone"],
-            data["start_date"], data["due_months"], data["notes"], data["renewal_date"], id
-        ))
-        con.commit()
+        contract.name = data["name"]
+        contract.address = data["address"]
+        contract.email = data["email"]
+        contract.phone = data["phone"]
+        contract.start_date = data["start_date"]
+        contract.due_months = data["due_months"]
+        contract.notes = data["notes"]
+        contract.renewal_date = data["renewal_date"]
+        db.session.commit()
         return redirect("/")
+    return render_template("form.html", contract=contract)
     
     contract = con.execute("SELECT * FROM contracts WHERE id=?", (id,)).fetchone()
     return render_template("form.html", contract=contract)
-from datetime import datetime
 
 from datetime import datetime
 
 def check_and_send_reminders():
-    con = get_db()
-    current_month_name = datetime.now().strftime("%B")     # "April"
-    current_month_number = datetime.now().strftime("%m")   # "04"
+    current_month = datetime.now().strftime("%B")   # "April"
+    current_month_number = datetime.now().strftime("%m")  # "04"
 
-    contracts = con.execute("SELECT * FROM contracts").fetchall()
+    contracts = Contract.query.all()
 
     for contract in contracts:
-        name = contract['name']
-        notes = contract['notes']
-        due_months = contract['due_months']
-        renewal_date = contract['renewal_date']
+        name = contract.name
+        notes = contract.notes
+        due_months = contract.due_months
+        renewal_date = contract.renewal_date
 
         # Service Reminder
-        if due_months and current_month_name in due_months:
+        if due_months and current_month in due_months:
             send_email_reminder(
                 to_email="johnny@giotechclimatesolutions.com",
                 subject=f"HVAC Maintenance Due - {name}",
@@ -115,7 +135,7 @@ def check_and_send_reminders():
         # Contract Renewal Reminder
         if renewal_date:
             try:
-                renewal_month = renewal_date.split("-")[1]  # MM from YYYY-MM-DD
+                renewal_month = renewal_date.strftime("%m")
                 if renewal_month == current_month_number:
                     send_email_reminder(
                         to_email="johnny@giotechclimatesolutions.com",
@@ -124,6 +144,7 @@ def check_and_send_reminders():
                     )
             except Exception as e:
                 print(f"Error parsing renewal_date for {name}: {e}")
+
 
 @app.route("/send-reminders")
 def send_reminders():
