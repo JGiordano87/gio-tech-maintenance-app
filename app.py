@@ -151,8 +151,10 @@ def send_reminders():
 
 @app.route("/init-db")
 def init_db():
+    print("Initializing the database...")  # <-- Log marker
     with app.app_context():
         db.create_all()
+        print("Database tables created.")   # <-- Log marker
     return "Database initialized!"
 
 if __name__ == "__main__":
