@@ -56,15 +56,20 @@ def view_contract(id):
 def add():
     if request.method == "POST":
         data = request.form
+
+        # Safely handle date conversion (convert empty strings to None)
+        def parse_date(value):
+            return value if value else None
+
         new_contract = Contract(
             name=data["name"],
             address=data["address"],
             email=data["email"],
             phone=data["phone"],
-            start_date=data["start_date"],
+            start_date=parse_date(data["start_date"]),
             due_months=data["due_months"],
             notes=data["notes"],
-            renewal_date=data["renewal_date"]
+            renewal_date=parse_date(data["renewal_date"])
         )
         db.session.add(new_contract)
         db.session.commit()
