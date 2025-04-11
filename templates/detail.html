@@ -103,4 +103,8 @@
     <a class="back-button" href="/">← Back to Clients</a>
 </body>
 </html>
+<div class="mt-4">
+    <a href="/edit/{{ contract.id }}" class="btn btn-warning">✏️ Edit</a>
+    <a href="/delete/{{ contract.id }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this contract?');">🗑️ Delete</a>
+</div>
 
