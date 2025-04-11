@@ -149,8 +149,11 @@ def send_reminders():
     check_and_send_reminders()
     return "Reminders sent (if any due)!"
 
-with app.app_context():
-    db.create_all()
+@app.route("/init-db")
+def init_db():
+    with app.app_context():
+        db.create_all()
+    return "Database initialized!"
 
 if __name__ == "__main__":
     import os
