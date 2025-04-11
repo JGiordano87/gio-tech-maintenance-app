@@ -87,6 +87,25 @@ def edit(id):
     
     contract = con.execute("SELECT * FROM contracts WHERE id=?", (id,)).fetchone()
     return render_template("form.html", contract=contract)
+from datetime import datetime
+
+def check_and_send_reminders():
+    con = get_db()
+    current_month = datetime.now().strftime("%B")  # e.g., "April"
+    contracts = con.execute("SELECT * FROM contracts").fetchall()
+    
+    for contract in contracts:
+        due_months = contract['due_months']
+        if due_months and current_month in due_months:
+            send_email_reminder(
+                to_email="johnny@giotechclimatesolutions.com",
+                subject="HVAC Maintenance Due - " + contract["name"],
+                body=f"Reminder: {contract['name']} is due for service this month.\n\nNotes: {contract['notes']}\nFilter Sizes or Details: {contract['notes']}"
+            )
+@app.route("/send-reminders")
+def send_reminders():
+    check_and_send_reminders()
+    return "Reminders sent (if any due)!"
 
 if __name__ == "__main__":
     import os
