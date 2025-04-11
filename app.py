@@ -91,7 +91,7 @@ from datetime import datetime
 
 def check_and_send_reminders():
     con = get_db()
-    current_month = datetime.now().strftime("%B")  # e.g., "April"
+    current_month = datetime.now().strftime("%B")  # Correct format for "April"
     contracts = con.execute("SELECT * FROM contracts").fetchall()
     
     for contract in contracts:
