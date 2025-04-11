@@ -89,19 +89,42 @@ def edit(id):
     return render_template("form.html", contract=contract)
 from datetime import datetime
 
+from datetime import datetime
+
 def check_and_send_reminders():
     con = get_db()
-    current_month = datetime.now().strftime("%B")  # Correct format for "April"
+    current_month_name = datetime.now().strftime("%B")     # "April"
+    current_month_number = datetime.now().strftime("%m")   # "04"
+
     contracts = con.execute("SELECT * FROM contracts").fetchall()
-    
+
     for contract in contracts:
+        name = contract['name']
+        notes = contract['notes']
         due_months = contract['due_months']
-        if due_months and current_month in due_months:
+        renewal_date = contract['renewal_date']
+
+        # Service Reminder
+        if due_months and current_month_name in due_months:
             send_email_reminder(
                 to_email="johnny@giotechclimatesolutions.com",
-                subject="HVAC Maintenance Due - " + contract["name"],
-                body=f"Reminder: {contract['name']} is due for service this month.\n\nNotes: {contract['notes']}\nFilter Sizes or Details: {contract['notes']}"
+                subject=f"HVAC Maintenance Due - {name}",
+                body=f"Reminder: {name} is due for service this month.\n\nNotes: {notes}\nFilter Sizes or Details: {notes}"
             )
+
+        # Contract Renewal Reminder
+        if renewal_date:
+            try:
+                renewal_month = renewal_date.split("-")[1]  # MM from YYYY-MM-DD
+                if renewal_month == current_month_number:
+                    send_email_reminder(
+                        to_email="johnny@giotechclimatesolutions.com",
+                        subject=f"Contract Renewal Reminder - {name}",
+                        body=f"The service contract for {name} is set to renew this month.\n\nNotes: {notes}"
+                    )
+            except Exception as e:
+                print(f"Error parsing renewal_date for {name}: {e}")
+
 @app.route("/send-reminders")
 def send_reminders():
     check_and_send_reminders()
