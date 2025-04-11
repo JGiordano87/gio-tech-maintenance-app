@@ -17,8 +17,6 @@ db = SQLAlchemy(app)
 from sqlalchemy import Column, Integer, String, Date, Text
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy(app)
-
 class Contract(db.Model):
     __tablename__ = 'contracts'
 
