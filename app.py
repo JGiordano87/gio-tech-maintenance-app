@@ -60,30 +60,30 @@ def view_contract(id):
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
     contract = Contract.query.get_or_404(id)
+
     if request.method == "POST":
-    data = request.form
+        data = request.form
 
-    def parse_date(value):
-        try:
-            return datetime.strptime(value, "%Y-%m-%d").date()
-        except ValueError:
-            return None
+        def parse_date(value):
+            try:
+                return datetime.strptime(value, "%Y-%m-%d").date()
+            except ValueError:
+                return None
 
-    # Only update if ID is present
-    if "id" in data:
-        contract = Contract.query.get(data["id"])
+        if "id" in data:
+            contract = Contract.query.get(data["id"])
 
-    contract.name = data["name"]
-    contract.address = data["address"]
-    contract.email = data["email"]
-    contract.phone = data["phone"]
-    contract.due_months = data["due_months"]
-    contract.notes = data["notes"]
-    contract.start_date = parse_date(data["start_date"])
-    contract.renewal_date = parse_date(data["renewal_date"])
+        contract.name = data["name"]
+        contract.address = data["address"]
+        contract.email = data["email"]
+        contract.phone = data["phone"]
+        contract.due_months = data["due_months"]
+        contract.notes = data["notes"]
+        contract.start_date = parse_date(data["start_date"])
+        contract.renewal_date = parse_date(data["renewal_date"])
 
-    db.session.commit()
-    return redirect("/")
+        db.session.commit()
+        return redirect("/")
 
     # This handles GET requests (like clicking "Edit")
     return render_template("form.html", contract={
