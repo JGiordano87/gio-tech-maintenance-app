@@ -19,7 +19,7 @@
         <input name="due_months" class="form-control mb-2" placeholder="e.g., February, April" value="{{ c['due_months'] if c else '' }}">
         <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filters: 20x25x2">{{ c['notes'] if c else '' }}</textarea>
         <input name="renewal_date" type="date" class="form-control mb-2" value="{{ c['renewal_date'] if c else '' }}">
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-primary" id="saveButton">Save</button>
   </form>
 </div>
 
