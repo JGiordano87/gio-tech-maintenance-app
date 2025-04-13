@@ -23,6 +23,22 @@
   </form>
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("contractForm");
+
+  form.addEventListener("keydown", function (event) {
+    const isEnter = event.key === "Enter";
+    const isTextArea = event.target.tagName === "TEXTAREA";
+
+    // If Enter is pressed and the field is NOT a textarea, prevent form submission
+    if (isEnter && !isTextArea) {
+      event.preventDefault();
+    }
+  });
+});
+</script>
+
 </body>
 </html>
 
