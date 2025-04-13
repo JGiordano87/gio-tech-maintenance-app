@@ -22,12 +22,11 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ JS loaded");
+    console.log("✅ JS is loaded");
 
     const form = document.getElementById("contractForm");
     const saveBtn = document.getElementById("saveButton");
 
-    // Prevent Enter/Delete from submitting unless inside textarea
     form.addEventListener("keydown", function (event) {
         const tag = event.target.tagName.toLowerCase();
         const isTextArea = tag === "textarea";
@@ -35,11 +34,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (isTriggerKey && !isTextArea) {
             event.preventDefault();
-            console.log("⛔ Prevented submission via", event.key);
+            console.log("🛑 Prevented submission via", event.key);
         }
     });
 
-    // Only submit on Save click
     if (saveBtn) {
         saveBtn.addEventListener("click", function () {
             console.log("✅ Save clicked, submitting");
@@ -48,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
-
 
 </body>
 </html>
