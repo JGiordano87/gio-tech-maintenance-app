@@ -24,10 +24,12 @@
 </div>
 
 <script>
-  document.getElementById('contractForm').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
-      event.preventDefault();
-    }
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('contractForm').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+        event.preventDefault();
+      }
+    });
   });
 </script>
 
