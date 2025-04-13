@@ -26,13 +26,10 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('contractForm');
-    form.addEventListener('keydown', function (event) {
-      // Allow Enter inside textarea, but block Enter on all other fields
-      if (
-        event.key === 'Enter' &&
-        event.target.tagName !== 'TEXTAREA' &&
-        event.target.tagName !== 'INPUT'
-      ) {
+
+    form.addEventListener('keypress', function (event) {
+      // If Enter key is pressed and NOT inside a textarea, prevent form submit
+      if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
         event.preventDefault();
       }
     });
