@@ -27,14 +27,33 @@
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('contractForm');
 
+  // Disable Enter key from submitting the form entirely unless inside a textarea
   form.addEventListener('keydown', function (event) {
-    // Prevent Enter from submitting if not in a textarea or not clicking Save
-    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+    const isEnter = event.key === 'Enter';
+    const isTextArea = event.target.tagName === 'TEXTAREA';
+
+    // If Enter is pressed and NOT in a textarea, prevent form submit
+    if (isEnter && !isTextArea) {
+      event.preventDefault();
+    }
+
+    // Optional: Block accidental form submission from Delete or others
+    // (not usually needed unless custom shortcuts)
+    if ((event.key === 'Delete' || event.key === 'Backspace') && !event.target.value) {
+      event.preventDefault();
+    }
+  });
+
+  // Extra fail-safe: prevent accidental double submissions
+  form.addEventListener('submit', function (event) {
+    const active = document.activeElement;
+    if (active.tagName !== 'BUTTON') {
       event.preventDefault();
     }
   });
 });
 </script>
+
 
 </body>
 </html>
