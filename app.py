@@ -82,7 +82,7 @@ def edit(id):
         return redirect("/")
 
     # This handles GET requests (like clicking "Edit")
-    return render_template("form.html", c=contract)
+    return render_template("form.html", contract=contract)
 
 @app.route("/test-email")
 def test_email():
