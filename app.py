@@ -91,37 +91,39 @@ def edit(id):
     contract = Contract.query.get_or_404(id)
 
     if request.method == "POST":
+        print("EDIT POST received:", request.form)  # Debug print
+
         data = request.form
 
         def parse_date(value):
             try:
                 return datetime.strptime(value, "%Y-%m-%d").date()
-            except ValueError:
+            except (ValueError, TypeError):
                 return None
 
-        if "id" in data:
-            contract = Contract.query.get(data["id"])
-
-        contract.name = data["name"]
-        contract.address = data["address"]
-        contract.email = data["email"]
-        contract.phone = data["phone"]
-        contract.due_months = data["due_months"]
-        contract.notes = data["notes"]
-        contract.start_date = parse_date(data["start_date"])
-        contract.renewal_date = parse_date(data["renewal_date"])
+        # Update contract fields
+        contract.name = data.get("name")
+        contract.address = data.get("address")
+        contract.email = data.get("email")
+        contract.phone = data.get("phone")
+        contract.notes = data.get("notes")
+        contract.due_months = data.get("due_months")
+        contract.start_date = parse_date(data.get("start_date"))
+        contract.renewal_date = parse_date(data.get("renewal_date"))
 
         db.session.commit()
+        print("Contract updated successfully.")
         return redirect("/")
 
+    # Render the form with existing data
     return render_template("form.html", contract={
         'id': contract.id,
         'name': contract.name,
         'address': contract.address,
         'email': contract.email,
         'phone': contract.phone,
-        'due_months': contract.due_months,
         'notes': contract.notes,
+        'due_months': contract.due_months,
         'start_date': contract.start_date.strftime('%Y-%m-%d') if contract.start_date else '',
         'renewal_date': contract.renewal_date.strftime('%Y-%m-%d') if contract.renewal_date else ''
     })
