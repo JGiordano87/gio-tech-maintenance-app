@@ -30,6 +30,35 @@ class Contract(db.Model):
     notes = db.Column(db.Text)
     renewal_date = db.Column(db.Date)
 
+@app.route("/add", methods=["POST"])
+def add():
+    data = request.form
+
+    def parse_date(value):
+        try:
+            return datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            return None
+
+    # Prevent accidental overwrites when editing
+    if "id" in data and data["id"]:
+        return redirect("/")
+
+    new_contract = Contract(
+        name=data["name"],
+        address=data["address"],
+        email=data["email"],
+        phone=data["phone"],
+        start_date=parse_date(data["start_date"]),
+        due_months=data["due_months"],
+        notes=data["notes"],
+        renewal_date=parse_date(data["renewal_date"]),
+    )
+
+    db.session.add(new_contract)
+    db.session.commit()
+    return redirect("/")
+
 def send_email_reminder(to_email, subject, body):
     msg = MIMEMultipart()
     msg["From"] = EMAIL_ADDRESS
