@@ -28,19 +28,20 @@
     const form = document.getElementById('contractForm');
     const saveBtn = document.getElementById('saveButton');
 
-    // Only submit form when Save button is clicked
-    saveBtn.addEventListener('click', function () {
-      form.submit();
-    });
-
-    // Prevent Enter key from submitting the form unless inside textarea
+    // Prevent form from submitting with Enter key unless it's in textarea
     form.addEventListener('keydown', function (event) {
       const isEnter = event.key === 'Enter';
       const isTextArea = event.target.tagName === 'TEXTAREA';
 
+      // Prevent Enter from submitting form in all fields except textarea
       if (isEnter && !isTextArea) {
-        event.preventDefault(); // stops Enter from submitting
+        event.preventDefault();
       }
+    });
+
+    // Manually submit form only when Save is clicked
+    saveBtn.addEventListener('click', function () {
+      form.submit();
     });
   });
 </script>
