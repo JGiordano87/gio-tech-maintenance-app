@@ -75,15 +75,13 @@ def edit(id):
         contract.phone = data["phone"]
         contract.due_months = data["due_months"]
         contract.notes = data["notes"]
-
-        start = data["start_date"]
-        renewal = data["renewal_date"]
-        contract.start_date = parse_date(start) if start else None
-        contract.renewal_date = parse_date(renewal) if renewal else None
+        contract.start_date = parse_date(data["start_date"])
+        contract.renewal_date = parse_date(data["renewal_date"])
 
         db.session.commit()
         return redirect("/")
 
+    # This handles GET requests (like clicking "Edit")
     return render_template("form.html", c=contract)
 
 @app.route("/test-email")
