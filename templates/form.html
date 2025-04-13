@@ -9,19 +9,17 @@
 <div class="container mt-4">
     <a href="/" class="btn btn-secondary mb-3">← Back</a>
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
-    <form method="post" action="{{ '/edit/' ~ c.id if c and c.id else '/add' }}" id="contractForm" autocomplete="off">
-  {% set c = contract or {} %}
-  <input name="address" class="form-control mb-2" placeholder="Address" value="{{ c['address'] if c else '' }}">
-  <input name="email" class="form-control mb-2" placeholder="Email" value="{{ c['email'] if c else '' }}">
-  <input name="phone" class="form-control mb-2" placeholder="Phone" value="{{ c['phone'] if c else '' }}">
-  <input name="start_date" type="date" class="form-control mb-2" value="{{ c['start_date'] if c else '' }}">
-  <input name="name" class="form-control mb-2" placeholder="Client Name" value="{{ c['name'] if c else '' }}">
-  <!-- all your other fields here -->
-  <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filters: 20x25x2">{{ c['notes'] if c else '' }}</textarea>
-  <input name="renewal_date" type="date" class="form-control mb-2" value="{{ c['renewal_date'] if c else '' }}">
+    <form method="post" action="{{ '/edit/' + str(c.id) if c and c.id else '/add' }}" id="contractForm" autocomplete="off">
+    <input name="name" class="form-control mb-2" placeholder="Client Name" value="{{ c['name'] if c else '' }}">
+    <input name="address" class="form-control mb-2" placeholder="Address" value="{{ c['address'] if c else '' }}">
+    <input name="email" class="form-control mb-2" placeholder="Email" value="{{ c['email'] if c else '' }}">
+    <input name="phone" class="form-control mb-2" placeholder="Phone" value="{{ c['phone'] if c else '' }}">
+    <input name="start_date" type="date" class="form-control mb-2" value="{{ c['start_date'] if c else '' }}">
+    <input name="due_months" class="form-control mb-2" placeholder="e.g., February, April" value="{{ c['due_months'] if c else '' }}">
+    <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filter sizes">{{ c['notes'] if c else '' }}</textarea>
+    <input name="renewal_date" type="date" class="form-control mb-2" value="{{ c['renewal_date'] if c else '' }}">
 
-  <!-- SAVE BUTTON -->
-  <button type="button" class="btn btn-primary" id="saveButton">Save</button>
+    <button type="button" class="btn btn-primary" id="saveButton">Save</button>
 </form>
 
 <script>
