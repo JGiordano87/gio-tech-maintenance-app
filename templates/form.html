@@ -26,15 +26,27 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("contractForm");
+    const saveBtn = document.getElementById("saveButton");
 
+    // Prevent Enter from submitting form unless it's inside a textarea
     form.addEventListener("keydown", function (event) {
         const isEnter = event.key === "Enter";
         const isTextArea = event.target.tagName === "TEXTAREA";
-
-        // Prevent form submission on Enter if not in a textarea
         if (isEnter && !isTextArea) {
+            event.preventDefault();  // Block Enter key from submitting form
+        }
+    });
+
+    // Prevent Delete key from submitting form accidentally
+    form.addEventListener("keydown", function (event) {
+        if (event.key === "Delete" && event.target.tagName !== "TEXTAREA") {
             event.preventDefault();
         }
+    });
+
+    // Only submit form when Save button is clicked
+    saveBtn.addEventListener("click", function () {
+        form.submit();
     });
 });
 </script>
