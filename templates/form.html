@@ -22,28 +22,35 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ JS is loaded");
+  console.log("✅ JS is loaded");
 
-    const form = document.getElementById("contractForm");
-    const saveBtn = document.getElementById("saveButton");
+  const form = document.getElementById("contractForm");
+  const saveBtn = document.getElementById("saveButton");
 
-    form.addEventListener("keydown", function (event) {
-        const tag = event.target.tagName.toLowerCase();
-        const isTextArea = tag === "textarea";
-        const isTriggerKey = event.key === "Enter" || event.key === "Delete";
+  // Log any form submission (no matter how it happens)
+  form.addEventListener("submit", function (e) {
+    console.log("🚨 Form is submitting!", e);
+  });
 
-        if (isTriggerKey && !isTextArea) {
-            event.preventDefault();
-            console.log("🛑 Prevented submission via", event.key);
-        }
-    });
+  // Prevent Enter or Delete from submitting unless inside a textarea
+  form.addEventListener("keydown", function (event) {
+    const tag = event.target.tagName.toLowerCase();
+    const isTextArea = tag === "textarea";
+    const isTriggerKey = event.key === "Enter" || event.key === "Delete";
 
-    if (saveBtn) {
-        saveBtn.addEventListener("click", function () {
-            console.log("✅ Save clicked, submitting");
-            form.submit();
-        });
+    if (isTriggerKey && !isTextArea) {
+      event.preventDefault();
+      console.log("🔴 Prevented submission via", event.key);
     }
+  });
+
+  // Only submit on Save button click
+  if (saveBtn) {
+    saveBtn.addEventListener("click", function () {
+      console.log("✅ Save clicked, submitting");
+      form.submit();
+    });
+  }
 });
 </script>
 
