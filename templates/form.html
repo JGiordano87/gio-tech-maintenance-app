@@ -19,41 +19,31 @@
         <input name="due_months" class="form-control mb-2" placeholder="e.g., February, April" value="{{ c['due_months'] if c else '' }}">
         <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filters: 20x25x2">{{ c['notes'] if c else '' }}</textarea>
         <input name="renewal_date" type="date" class="form-control mb-2" value="{{ c['renewal_date'] if c else '' }}">
-            <button type="button" class="btn btn-primary" onclick="document.getElementById('contractForm').submit()">Save</button>
+            <button type="button" class="btn btn-primary" id="saveButton">Save</button>
   </form>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('contractForm');
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('contractForm');
+    const saveBtn = document.getElementById('saveButton');
 
-  // Disable Enter key from submitting the form entirely unless inside a textarea
-  form.addEventListener('keydown', function (event) {
-    const isEnter = event.key === 'Enter';
-    const isTextArea = event.target.tagName === 'TEXTAREA';
+    // Only submit form when Save button is clicked
+    saveBtn.addEventListener('click', function () {
+      form.submit();
+    });
 
-    // If Enter is pressed and NOT in a textarea, prevent form submit
-    if (isEnter && !isTextArea) {
-      event.preventDefault();
-    }
+    // Prevent Enter key from submitting the form unless inside textarea
+    form.addEventListener('keydown', function (event) {
+      const isEnter = event.key === 'Enter';
+      const isTextArea = event.target.tagName === 'TEXTAREA';
 
-    // Optional: Block accidental form submission from Delete or others
-    // (not usually needed unless custom shortcuts)
-    if ((event.key === 'Delete' || event.key === 'Backspace') && !event.target.value) {
-      event.preventDefault();
-    }
+      if (isEnter && !isTextArea) {
+        event.preventDefault(); // stops Enter from submitting
+      }
+    });
   });
-
-  // Extra fail-safe: prevent accidental double submissions
-  form.addEventListener('submit', function (event) {
-    const active = document.activeElement;
-    if (active.tagName !== 'BUTTON') {
-      event.preventDefault();
-    }
-  });
-});
 </script>
-
 
 </body>
 </html>
