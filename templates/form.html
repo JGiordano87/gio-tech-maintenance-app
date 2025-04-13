@@ -27,20 +27,24 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("contractForm");
 
-  // Prevent Enter and Delete from submitting the form unless you're inside a TEXTAREA
+  // Prevent Enter and Delete keys from submitting the form unless you're in a TEXTAREA
   form.addEventListener("keydown", function (event) {
     const tag = event.target.tagName.toLowerCase();
+    const isTextarea = tag === "textarea";
+    const isEnterOrDelete = event.key === "Enter" || event.key === "Delete";
 
-    if ((event.key === "Enter" || event.key === "Delete") && tag !== "textarea") {
+    if (isEnterOrDelete && !isTextarea) {
       event.preventDefault();
     }
   });
 
-  // Submit form only by clicking the button
-  const saveBtn = document.querySelector("button[type='submit']");
-  saveBtn.addEventListener("click", function () {
-    form.submit();
-  });
+  // Allow Save button to submit the form
+  const saveBtn = document.getElementById("saveButton");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", function () {
+      form.submit();
+    });
+  }
 });
 </script>
 
