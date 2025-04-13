@@ -47,34 +47,44 @@ def index():
     contracts = Contract.query.with_entities(Contract.id, Contract.name).all()
     return render_template("index.html", contracts=contracts)
 
+from datetime import datetime
+
+from datetime import datetime  # Make sure this is imported at the top
+
 @app.route("/contract/<int:id>")
 def view_contract(id):
     contract = Contract.query.get_or_404(id)
-    return render_template("detail.html", contract=contract)
+current_month = datetime.now().strftime("%m")
+return render_template("detail.html", contract=contract, current_month=current_month)
 
-@app.route("/add", methods=["GET", "POST"])
-def add():
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
+    contract = Contract.query.get_or_404(id)
     if request.method == "POST":
         data = request.form
 
-        # Safely handle date conversion (convert empty strings to None)
         def parse_date(value):
-            return value if value else None
+            try:
+                return datetime.strptime(value, "%Y-%m-%d").date()
+            except ValueError:
+                return None
 
-        new_contract = Contract(
-            name=data["name"],
-            address=data["address"],
-            email=data["email"],
-            phone=data["phone"],
-            start_date=parse_date(data["start_date"]),
-            due_months=data["due_months"],
-            notes=data["notes"],
-            renewal_date=parse_date(data["renewal_date"])
-        )
-        db.session.add(new_contract)
+        contract.name = data["name"]
+        contract.address = data["address"]
+        contract.email = data["email"]
+        contract.phone = data["phone"]
+        contract.due_months = data["due_months"]
+        contract.notes = data["notes"]
+
+        start = data["start_date"]
+        renewal = data["renewal_date"]
+        contract.start_date = parse_date(start) if start else None
+        contract.renewal_date = parse_date(renewal) if renewal else None
+
         db.session.commit()
         return redirect("/")
-    return render_template("form.html")
+
+    return render_template("form.html", c=contract)
 
 @app.route("/test-email")
 def test_email():
@@ -84,7 +94,6 @@ def test_email():
         body="This is a test reminder from your Gio-Tech app!"
     )
     return "Test email sent!"
-
 
 @app.route("/delete/<int:id>")
 def delete(id):

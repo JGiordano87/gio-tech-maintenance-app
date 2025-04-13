@@ -75,7 +75,8 @@
         <span class="icon">🔁</span><span>Renewal Date:</span>
         {% if contract.renewal_date %}
             {% set renewal_month = contract.renewal_date.strftime('%m') %}
-            {% set current_month = now.strftime('%m') %}
+{% set current_month = current_month %}
+
             {% if renewal_month == current_month %}
                 <span class="badge badge-red">{{ contract.renewal_date }}</span>
             {% elif renewal_month|int - current_month|int <= 2 %}
