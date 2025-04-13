@@ -24,16 +24,16 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('contractForm');
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('contractForm');
 
-    form.addEventListener('keypress', function (event) {
-      // If Enter key is pressed and NOT inside a textarea, prevent form submit
-      if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
-        event.preventDefault();
-      }
-    });
+  form.addEventListener('keydown', function (event) {
+    // Prevent Enter from submitting if not in a textarea or not clicking Save
+    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
   });
+});
 </script>
 
 </body>
