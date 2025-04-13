@@ -21,25 +21,26 @@
 </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("🔥 JS is running!");  // ✅ Add this line
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("contractForm");
+    const saveBtn = document.getElementById("saveButton");
 
-    const form = document.getElementById('contractForm');
-    const saveBtn = document.getElementById('saveButton');
-
-    form.addEventListener('keydown', function (event) {
+    // Disable Enter/Delete outside <textarea>
+    form.addEventListener("keydown", function (event) {
         const tag = event.target.tagName.toLowerCase();
-        const isTextArea = tag === 'textarea';
-        const isTriggerKey = event.key === 'Enter' || event.key === 'Delete';
+        const isTextArea = tag === "textarea";
+        const key = event.key;
 
-        if (isTriggerKey && !isTextArea) {
+        // Block Enter/Delete if not in textarea
+        if ((key === "Enter" || key === "Delete") && !isTextArea) {
             event.preventDefault();
         }
     });
 
+    // Ensure only Save button submits the form
     if (saveBtn) {
-        saveBtn.addEventListener('click', function () {
-            form.submit();
+        saveBtn.addEventListener("click", function () {
+            form.requestSubmit(); // safer than form.submit()
         });
     }
 });
