@@ -22,10 +22,11 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    console.log("🔥 JS is running!");  // ✅ Add this line
+
     const form = document.getElementById('contractForm');
     const saveBtn = document.getElementById('saveButton');
 
-    // Prevent Enter or Delete from submitting if not inside a textarea
     form.addEventListener('keydown', function (event) {
         const tag = event.target.tagName.toLowerCase();
         const isTextArea = tag === 'textarea';
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Only allow form to submit when Save is clicked
     if (saveBtn) {
         saveBtn.addEventListener('click', function () {
             form.submit();
@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
-
 
 </body>
 </html>
