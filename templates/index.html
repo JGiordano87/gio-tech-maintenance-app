@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,10 +11,12 @@
     <a href="/add" class="btn btn-success mb-3">Add New Contract</a>
     <ul class="list-group">
         {% for contract in contracts %}
-            <li class="list-group-item">
-                <a href="/contract/{{ contract['id'] }}">{{ contract['name'] }}</a>
-            </li>
-        {% endfor %}
+  {% if contract['name'].strip() %}
+    <li class="list-group-item">
+        <a href="/contract/{{ contract['id'] }}">{{ contract['name'] }}</a>
+    </li>
+  {% endif %}
+{% endfor %}
     </ul>
 </div>
 </body>
