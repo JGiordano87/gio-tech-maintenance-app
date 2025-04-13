@@ -25,29 +25,22 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("contractForm");
-    const saveBtn = document.getElementById("saveButton");
+  const form = document.getElementById("contractForm");
 
-    // Prevent Enter from submitting form unless it's inside a textarea
-    form.addEventListener("keydown", function (event) {
-        const isEnter = event.key === "Enter";
-        const isTextArea = event.target.tagName === "TEXTAREA";
-        if (isEnter && !isTextArea) {
-            event.preventDefault();  // Block Enter key from submitting form
-        }
-    });
+  // Prevent Enter and Delete from submitting the form unless you're inside a TEXTAREA
+  form.addEventListener("keydown", function (event) {
+    const tag = event.target.tagName.toLowerCase();
 
-    // Prevent Delete key from submitting form accidentally
-    form.addEventListener("keydown", function (event) {
-        if (event.key === "Delete" && event.target.tagName !== "TEXTAREA") {
-            event.preventDefault();
-        }
-    });
+    if ((event.key === "Enter" || event.key === "Delete") && tag !== "textarea") {
+      event.preventDefault();
+    }
+  });
 
-    // Only submit form when Save button is clicked
-    saveBtn.addEventListener("click", function () {
-        form.submit();
-    });
+  // Submit form only by clicking the button
+  const saveBtn = document.querySelector("button[type='submit']");
+  saveBtn.addEventListener("click", function () {
+    form.submit();
+  });
 });
 </script>
 
