@@ -22,29 +22,33 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ JS loaded");
+
     const form = document.getElementById("contractForm");
     const saveBtn = document.getElementById("saveButton");
 
-    // Disable Enter/Delete outside <textarea>
+    // Prevent Enter/Delete from submitting unless inside textarea
     form.addEventListener("keydown", function (event) {
         const tag = event.target.tagName.toLowerCase();
         const isTextArea = tag === "textarea";
-        const key = event.key;
+        const isTriggerKey = event.key === "Enter" || event.key === "Delete";
 
-        // Block Enter/Delete if not in textarea
-        if ((key === "Enter" || key === "Delete") && !isTextArea) {
+        if (isTriggerKey && !isTextArea) {
             event.preventDefault();
+            console.log("⛔ Prevented submission via", event.key);
         }
     });
 
-    // Ensure only Save button submits the form
+    // Only submit on Save click
     if (saveBtn) {
         saveBtn.addEventListener("click", function () {
-            form.requestSubmit(); // safer than form.submit()
+            console.log("✅ Save clicked, submitting");
+            form.submit();
         });
     }
 });
 </script>
+
 
 </body>
 </html>
