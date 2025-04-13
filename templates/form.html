@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <a href="/" class="btn btn-secondary mb-3">← Back</a>
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
-    <form method="post">
+    <form method="post" action="/add">
         {% set c = contract or {} %}
         <input name="name" class="form-control mb-2" placeholder="Client Name" value="{{ c['name'] if c else '' }}">
         <input name="address" class="form-control mb-2" placeholder="Address" value="{{ c['address'] if c else '' }}">
