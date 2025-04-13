@@ -152,34 +152,6 @@ def check_and_send_reminders():
             except Exception as e:
                 print(f"Error parsing renewal_date for {name}: {e}")
 
-@app.route("/add", methods=["GET", "POST"])
-def add():
-    if request.method == "POST":
-        data = request.form
-
-        def parse_date(value):
-            try:
-                return datetime.strptime(value, "%Y-%m-%d").date()
-            except ValueError:
-                return None
-
-        contract = Contract(
-            name=data["name"],
-            address=data["address"],
-            email=data["email"],
-            phone=data["phone"],
-            due_months=data["due_months"],
-            notes=data["notes"],
-            start_date=parse_date(data["start_date"]),
-            renewal_date=parse_date(data["renewal_date"])
-        )
-
-        db.session.add(contract)
-        db.session.commit()
-        return redirect("/")
-
-    return render_template("form.html", contract=None)
-
 @app.route("/send-reminders")
 def send_reminders():
     check_and_send_reminders()
