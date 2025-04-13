@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <a href="/" class="btn btn-secondary mb-3">← Back</a>
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
-    <form method="post" action="/add" id="contractForm">
+    <form method="post" action="/add" id="contractForm" onkeydown="return event.key !== 'Enter' || event.target.tagName === 'TEXTAREA';">
         {% set c = contract or {} %}
         <input name="name" class="form-control mb-2" placeholder="Client Name" value="{{ c['name'] if c else '' }}">
         <input name="address" class="form-control mb-2" placeholder="Address" value="{{ c['address'] if c else '' }}">
@@ -22,29 +22,6 @@
             <button type="button" class="btn btn-primary" id="saveButton">Save</button>
   </form>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('contractForm');
-    const saveBtn = document.getElementById('saveButton');
-
-    // Prevent form from submitting with Enter key unless it's in textarea
-    form.addEventListener('keydown', function (event) {
-      const isEnter = event.key === 'Enter';
-      const isTextArea = event.target.tagName === 'TEXTAREA';
-
-      // Prevent Enter from submitting form in all fields except textarea
-      if (isEnter && !isTextArea) {
-        event.preventDefault();
-      }
-    });
-
-    // Manually submit form only when Save is clicked
-    saveBtn.addEventListener('click', function () {
-      form.submit();
-    });
-  });
-</script>
 
 </body>
 </html>
