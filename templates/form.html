@@ -17,7 +17,7 @@
         <input name="phone" class="form-control mb-2" placeholder="Phone" value="{{ c['phone'] if c else '' }}">
         <input name="start_date" type="date" class="form-control mb-2" value="{{ c['start_date'] if c else '' }}">
         <input name="due_months" class="form-control mb-2" placeholder="e.g., February, April" value="{{ c['due_months'] if c else '' }}">
-        <input name="notes" class="form-control mb-2" placeholder="e.g., Filters: 20x25x2" value="{{ c['notes'] if c else '' }}">
+        <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filters: 20x25x2">{{ c['notes'] if c else '' }}</textarea>
         <input name="renewal_date" type="date" class="form-control mb-2" value="{{ c['renewal_date'] if c else '' }}">
         <button class="btn btn-primary">Save</button>
     </form>
