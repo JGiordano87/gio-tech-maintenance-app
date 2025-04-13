@@ -11,6 +11,10 @@
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
     <form method="post" action="{{ '/edit/' ~ c.id if c and c.id else '/add' }}" id="contractForm" autocomplete="off">
   {% set c = contract or {} %}
+  <input name="address" class="form-control mb-2" placeholder="Address" value="{{ c['address'] if c else '' }}">
+  <input name="email" class="form-control mb-2" placeholder="Email" value="{{ c['email'] if c else '' }}">
+  <input name="phone" class="form-control mb-2" placeholder="Phone" value="{{ c['phone'] if c else '' }}">
+  <input name="start_date" type="date" class="form-control mb-2" value="{{ c['start_date'] if c else '' }}">
   <input name="name" class="form-control mb-2" placeholder="Client Name" value="{{ c['name'] if c else '' }}">
   <!-- all your other fields here -->
   <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filters: 20x25x2">{{ c['notes'] if c else '' }}</textarea>
