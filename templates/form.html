@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <a href="/" class="btn btn-secondary mb-3">← Back</a>
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
-    <form method="post" action="{{ '/edit/' + str(c.id) if c and c.id else '/add' }}" id="contractForm" autocomplete="off">
+    <form method="post" action="{{ '/edit/' + str(c['id']) if c.get('id') else '/add' }}" id="contractForm">
   {% set c = contract or {} %}
 {% if c.get('id') %}
   <input type="hidden" name="id" value="{{ c['id'] }}">
