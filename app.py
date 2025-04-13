@@ -54,8 +54,8 @@ from datetime import datetime  # Make sure this is imported at the top
 @app.route("/contract/<int:id>")
 def view_contract(id):
     contract = Contract.query.get_or_404(id)
-current_month = datetime.now().strftime("%m")
-return render_template("detail.html", contract=contract, current_month=current_month)
+    current_month = datetime.now().strftime("%m")
+    return render_template("detail.html", contract=contract, current_month=current_month)
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
