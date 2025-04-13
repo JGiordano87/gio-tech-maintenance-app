@@ -101,23 +101,6 @@ def delete(id):
     db.session.delete(contract)
     db.session.commit()
     return redirect("/")
-
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit(id):
-    contract = Contract.query.get_or_404(id)
-    if request.method == "POST":
-        data = request.form
-        contract.name = data["name"]
-        contract.address = data["address"]
-        contract.email = data["email"]
-        contract.phone = data["phone"]
-        contract.start_date = data["start_date"]
-        contract.due_months = data["due_months"]
-        contract.notes = data["notes"]
-        contract.renewal_date = data["renewal_date"]
-        db.session.commit()
-        return redirect("/")
-    return render_template("form.html", contract=contract)
     
     contract = con.execute("SELECT * FROM contracts WHERE id=?", (id,)).fetchone()
     return render_template("form.html", contract=contract)
