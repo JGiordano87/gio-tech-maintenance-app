@@ -11,6 +11,9 @@
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
     <form method="post" action="{{ '/edit/' + str(c.id) if c and c.id else '/add' }}" id="contractForm" autocomplete="off">
   {% set c = contract or {} %}
+{% if c.get('id') %}
+  <input type="hidden" name="id" value="{{ c['id'] }}">
+{% endif %}
     <input name="name" class="form-control mb-2" placeholder="Client Name" value="{{ c['name'] if c else '' }}">
     <input name="address" class="form-control mb-2" placeholder="Address" value="{{ c['address'] if c else '' }}">
     <input name="email" class="form-control mb-2" placeholder="Email" value="{{ c['email'] if c else '' }}">

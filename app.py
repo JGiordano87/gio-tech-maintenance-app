@@ -61,28 +61,42 @@ def view_contract(id):
 def edit(id):
     contract = Contract.query.get_or_404(id)
     if request.method == "POST":
-        data = request.form
+    data = request.form
 
-        def parse_date(value):
-            try:
-                return datetime.strptime(value, "%Y-%m-%d").date()
-            except ValueError:
-                return None
+    def parse_date(value):
+        try:
+            return datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            return None
 
-        contract.name = data["name"]
-        contract.address = data["address"]
-        contract.email = data["email"]
-        contract.phone = data["phone"]
-        contract.due_months = data["due_months"]
-        contract.notes = data["notes"]
-        contract.start_date = parse_date(data["start_date"])
-        contract.renewal_date = parse_date(data["renewal_date"])
+    # Only update if ID is present
+    if "id" in data:
+        contract = Contract.query.get(data["id"])
 
-        db.session.commit()
-        return redirect("/")
+    contract.name = data["name"]
+    contract.address = data["address"]
+    contract.email = data["email"]
+    contract.phone = data["phone"]
+    contract.due_months = data["due_months"]
+    contract.notes = data["notes"]
+    contract.start_date = parse_date(data["start_date"])
+    contract.renewal_date = parse_date(data["renewal_date"])
+
+    db.session.commit()
+    return redirect("/")
 
     # This handles GET requests (like clicking "Edit")
-    return render_template("form.html", contract=contract)
+    return render_template("form.html", contract={
+    'id': contract.id,
+    'name': contract.name,
+    'address': contract.address,
+    'email': contract.email,
+    'phone': contract.phone,
+    'due_months': contract.due_months,
+    'notes': contract.notes,
+    'start_date': contract.start_date.strftime('%Y-%m-%d') if contract.start_date else '',
+    'renewal_date': contract.renewal_date.strftime('%Y-%m-%d') if contract.renewal_date else ''
+})
 
 @app.route("/test-email")
 def test_email():
