@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <a href="/" class="btn btn-secondary mb-3">← Back</a>
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
-    <form method="post" action="{% if c and c['id'] %}/edit/{{ c['id'] }}{% else %}/add{% endif %}">
+    <form id="contractForm" name="contractForm" method="post" action="{{ url_for('edit', id=c['id']) if c and c['id'] else url_for('add') }}">
   {% set c = contract or {} %}
 {% if c.get('id') %}
   <input type="hidden" name="id" value="{{ c['id'] }}">
@@ -23,43 +23,31 @@
     <textarea name="notes" class="form-control mb-2" rows="3" placeholder="e.g., Filter sizes">{{ c['notes'] if c else '' }}</textarea>
     <input name="renewal_date" type="date" class="form-control mb-2" value="{{ c['renewal_date'] if c else '' }}">
 
-    <button type="button" class="btn btn-primary" id="saveButton">Save</button>
+    <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
+<!-- Your JS must come AFTER the form ends -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ JS is loaded");
+    const form = document.getElementById("contractForm");
 
-  const form = document.getElementById("contractForm");
-  const saveBtn = document.getElementById("saveButton");
-
-  // Log any form submission (no matter how it happens)
-  form.addEventListener("submit", function (e) {
-    console.log("🚨 Form is submitting!", e);
-  });
-
-  // Prevent Enter or Delete from submitting unless inside a textarea
-  form.addEventListener("keydown", function (event) {
-    const tag = event.target.tagName.toLowerCase();
-    const isTextArea = tag === "textarea";
-    const isTriggerKey = event.key === "Enter" || event.key === "Delete";
-
-    if (isTriggerKey && !isTextArea) {
-      event.preventDefault();
-      console.log("🔴 Prevented submission via", event.key);
+    if (!form) {
+        console.error("❌ Form not found");
+        return;
     }
-  });
 
-  // Only submit on Save button click
-  if (saveBtn) {
-    saveBtn.addEventListener("click", function () {
-      console.log("✅ Save clicked, submitting");
-      form.submit();
+    form.addEventListener("keydown", function (event) {
+        const tag = event.target.tagName.toLowerCase();
+        const isTextArea = tag === "textarea";
+        const isTriggerKey = event.key === "Enter" || event.key === "Delete";
+
+        if (isTriggerKey && !isTextArea) {
+            event.preventDefault();
+            console.log("⛔ Prevented form submit on", event.key);
+        }
     });
-  }
 });
 </script>
-
 </body>
 </html>
 
