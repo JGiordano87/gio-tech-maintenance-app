@@ -6,8 +6,8 @@ from email.mime.multipart import MIMEMultipart
 from flask_sqlalchemy import SQLAlchemy
 import os
 
-EMAIL_ADDRESS = "johnny.giordano87@gmail.com"
-EMAIL_PASSWORD = "bxd..."
+EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
