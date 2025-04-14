@@ -45,17 +45,19 @@ def add_contract():
             if not name:
                 return "Client name is required", 400
 
-            new_contract = ClientContract(
-                name=name,
-                email=email,
-                phone=phone,
-                frequency=frequency,
-                due_months=",".join(due_months),
-                renewal_month=renewal_month,
-                notes=notes,
-            )
+            new_contract = Contract(
+            name=name,
+            email=email,
+            phone=phone,
+            frequency=frequency,
+            due_months=".".join(due_months),
+            renewal_month=renewal_month,
+            notes=notes
+           )
+
             db.session.add(new_contract)
             db.session.commit()
+            send_reminders_for_contract(new_contract)
 
             send_email(
                 subject="New HVAC Contract Added",
@@ -209,6 +211,36 @@ def init_db():
         db.create_all()
         print("Database tables created.")  # <-- Log marker
     return "Database initialized!"
+
+def send_reminders_for_contract(contract):
+    name = contract.name
+    notes = contract.notes
+    due_months = contract.due_months
+    renewal_date = contract.renewal_date
+
+    current_month = datetime.now().strftime("%B")  # e.g., "April"
+    current_month_number = datetime.now().strftime("%m")  # e.g., "04"
+
+    # Send HVAC service reminder
+    if due_months and current_month in due_months:
+        send_email_reminder(
+            to_email="johnny@giotechclimatesolutions.com",
+            subject=f"HVAC Maintenance Due - {name}",
+            body=f"Reminder: {name} is due for service this month.\n\nNotes: {notes}\nFilter Sizes or Details: {notes}"
+        )
+
+    # Send contract renewal reminder
+    if renewal_date:
+        try:
+            renewal_month = renewal_date.strftime("%m")
+            if renewal_month == current_month_number:
+                send_email_reminder(
+                    to_email="johnny@giotechclimatesolutions.com",
+                    subject=f"Contract Renewal Reminder - {name}",
+                    body=f"The service contract for {name} is set to renew this month.\n\nNotes: {notes}"
+                )
+        except Exception as e:
+            print(f"Error parsing renewal_date for {name}: {e}")
 
 @app.route("/check-contracts")
 def check_contracts():
