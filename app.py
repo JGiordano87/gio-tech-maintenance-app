@@ -55,13 +55,13 @@ def add():
         start_date=parse_date(data["start_date"]),
         due_months=data["due_months"],
         notes=data["notes"],
-        renewal_date=parse_date(data["renewal_date"]),
+        renewal_date=parse_date(data["renewal_date"])
     )
 
     db.session.add(new_contract)
     db.session.commit()
 
-    # ✅ Send internal email reminder
+    # ✅ Send confirmation email
     send_email_reminder(
         to_email="johnny@giotechclimatesolutions.com",
         subject="New HVAC Contract Added",
@@ -70,8 +70,10 @@ def add():
              f"Renewal Date: {new_contract.renewal_date}"
     )
 
-    print("📬 Email function triggered")
+    # ✅ Check if due this month or up for renewal — send reminders if applicable
+    send_reminders_for_contract(new_contract)
 
+    print("✅ Contract added & reminders (if due) sent.")
     return redirect("/")
 
 @app.route("/")
@@ -211,8 +213,13 @@ def init_db():
     print("Initializing the database...")  # <-- Log marker
     with app.app_context():
         db.create_all()
-        print("Database tables created.")   # <-- Log marker
+        print("Database tables created.")  # <-- Log marker
     return "Database initialized!"
+
+@app.route("/check-contracts")
+def check_contracts():
+    check_and_send_reminders()
+    return "Manual reminder check complete."
 
 if __name__ == "__main__":
     import os
