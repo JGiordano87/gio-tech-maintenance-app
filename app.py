@@ -83,6 +83,22 @@ from datetime import datetime
 
 from datetime import datetime  # Make sure this is imported at the top
 
+# Email Reminder Function
+def send_email_reminder(to_email, subject, body):
+    try:
+        msg = MIMEMultipart()
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = to_email
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+        print("✅ Email sent!")
+    except Exception as e:
+        print("❌ Email failed:", e)
+
 @app.route("/contract/<int:id>")
 def view_contract(id):
     contract = Contract.query.get_or_404(id)
