@@ -30,8 +30,11 @@ class Contract(db.Model):
     notes = db.Column(db.Text)
     renewal_date = db.Column(db.Date)
 
-@app.route("/add", methods=["POST"])
+@app.route("/add", methods=["GET", "POST"])
 def add():
+    if request.method == "GET":
+        return render_template("form.html", contract={})
+
     data = request.form
 
     def parse_date(value):
@@ -40,6 +43,7 @@ def add():
         except ValueError:
             return None
 
+    # Prevent accidental overwrites when editing
     if "id" in data and data["id"]:
         return redirect("/")
 
@@ -51,7 +55,7 @@ def add():
         start_date=parse_date(data["start_date"]),
         due_months=data["due_months"],
         notes=data["notes"],
-        renewal_date=parse_date(data["renewal_date"])
+        renewal_date=parse_date(data["renewal_date"]),
     )
 
     db.session.add(new_contract)
@@ -61,8 +65,11 @@ def add():
     send_email_reminder(
         to_email="johnny@giotechclimatesolutions.com",
         subject="New HVAC Contract Added",
-        body=f"A new contract was added for {new_contract.name}.\nStart Date: {new_contract.start_date}\nRenewal Date: {new_contract.renewal_date}"
+        body=f"A new contract was added for {new_contract.name}.\n"
+             f"Start Date: {new_contract.start_date}\n"
+             f"Renewal Date: {new_contract.renewal_date}"
     )
+
     print("📬 Email function triggered")
 
     return redirect("/")
