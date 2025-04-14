@@ -31,50 +31,44 @@ class Contract(db.Model):
     renewal_date = db.Column(db.Date)
 
 @app.route("/add", methods=["GET", "POST"])
-def add():
-    if request.method == "GET":
-        return render_template("form.html", contract={})
-
-    data = request.form
-
-    def parse_date(value):
+def add_contract():
+    if request.method == "POST":
         try:
-            return datetime.strptime(value, "%Y-%m-%d").date()
-        except ValueError:
-            return None
+            name = request.form.get("name", "").strip()
+            email = request.form.get("email", "").strip()
+            phone = request.form.get("phone", "").strip()
+            frequency = request.form.get("frequency", "").strip()
+            due_months = request.form.getlist("due_months")
+            renewal_month = request.form.get("renewal_month", "").strip()
+            notes = request.form.get("notes", "").strip()
 
-    # Prevent accidental overwrites when editing
-    if "id" in data and data["id"]:
-        return redirect("/")
+            if not name:
+                return "Client name is required", 400
 
-    new_contract = Contract(
-        name=data["name"],
-        address=data["address"],
-        email=data["email"],
-        phone=data["phone"],
-        start_date=parse_date(data["start_date"]),
-        due_months=data["due_months"],
-        notes=data["notes"],
-        renewal_date=parse_date(data["renewal_date"])
-    )
+            new_contract = ClientContract(
+                name=name,
+                email=email,
+                phone=phone,
+                frequency=frequency,
+                due_months=",".join(due_months),
+                renewal_month=renewal_month,
+                notes=notes,
+            )
+            db.session.add(new_contract)
+            db.session.commit()
 
-    db.session.add(new_contract)
-    db.session.commit()
+            send_email(
+                subject="New HVAC Contract Added",
+                body=f"Contract for {name} has been added.",
+                recipient="johnny@giotechclimatesolutions.com"
+            )
 
-    # ✅ Send confirmation email
-    send_email_reminder(
-        to_email="johnny@giotechclimatesolutions.com",
-        subject="New HVAC Contract Added",
-        body=f"A new contract was added for {new_contract.name}.\n"
-             f"Start Date: {new_contract.start_date}\n"
-             f"Renewal Date: {new_contract.renewal_date}"
-    )
+            return redirect(url_for("index"))
+        except Exception as e:
+            print(f"Error in /add: {e}")
+            return "Internal Server Error", 500
 
-    # ✅ Check if due this month or up for renewal — send reminders if applicable
-    send_reminders_for_contract(new_contract)
-
-    print("✅ Contract added & reminders (if due) sent.")
-    return redirect("/")
+    return render_template("form.html")
 
 @app.route("/")
 def index():
