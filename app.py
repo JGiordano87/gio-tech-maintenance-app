@@ -30,34 +30,38 @@ class Contract(db.Model):
     notes = db.Column(db.Text)
     renewal_date = db.Column(db.Date)
 
-@app.route("/add", methods=["POST"])
+@app.route("/add", methods=["GET", "POST"])
 def add():
-    data = request.form
+    if request.method == "POST":
+        data = request.form
 
-    def parse_date(value):
-        try:
-            return datetime.strptime(value, "%Y-%m-%d").date()
-        except ValueError:
-            return None
+        def parse_date(value):
+            try:
+                return datetime.strptime(value, "%Y-%m-%d").date()
+            except ValueError:
+                return None
 
-    # Prevent accidental overwrites when editing
-    if "id" in data and data["id"]:
+        # Prevent accidental overwrites when editing
+        if "id" in data and data["id"]:
+            return redirect("/")
+
+        new_contract = Contract(
+            name=data["name"],
+            address=data["address"],
+            email=data["email"],
+            phone=data["phone"],
+            start_date=parse_date(data["start_date"]),
+            due_months=data["due_months"],
+            notes=data["notes"],
+            renewal_date=parse_date(data["renewal_date"]),
+        )
+
+        db.session.add(new_contract)
+        db.session.commit()
         return redirect("/")
 
-    new_contract = Contract(
-        name=data["name"],
-        address=data["address"],
-        email=data["email"],
-        phone=data["phone"],
-        start_date=parse_date(data["start_date"]),
-        due_months=data["due_months"],
-        notes=data["notes"],
-        renewal_date=parse_date(data["renewal_date"]),
-    )
-
-    db.session.add(new_contract)
-    db.session.commit()
-    return redirect("/")
+    # Show the blank form on GET
+    return render_template("form.html")
 
 def send_email_reminder(to_email, subject, body):
     msg = MIMEMultipart()
