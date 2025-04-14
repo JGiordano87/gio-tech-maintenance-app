@@ -9,7 +9,7 @@
 <div class="container mt-4">
     <a href="/" class="btn btn-secondary mb-3">← Back</a>
     <h2>{{ 'Edit' if contract else 'Add' }} Contract</h2>
-    <form id="contractForm" name="contractForm" method="post" action="{{ url_for('edit', id=c['id']) if c and c['id'] else url_for('add') }}">
+    <form id="contractForm" name="contractForm" method="post" action="{{ url_for('edit', id=c['id']) if c and c['id'] else url_for('add_contract') }}">
   {% set c = contract or {} %}
 {% if c.get('id') %}
   <input type="hidden" name="id" value="{{ c['id'] }}">
