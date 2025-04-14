@@ -30,50 +30,42 @@ class Contract(db.Model):
     notes = db.Column(db.Text)
     renewal_date = db.Column(db.Date)
 
-@app.route("/add", methods=["GET", "POST"])
+@app.route("/add", methods=["POST"])
 def add():
-    if request.method == "POST":
-        data = request.form
+    data = request.form
 
-        def parse_date(value):
-            try:
-                return datetime.strptime(value, "%Y-%m-%d").date()
-            except ValueError:
-                return None
+    def parse_date(value):
+        try:
+            return datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            return None
 
-        # Prevent accidental overwrites when editing
-        if "id" in data and data["id"]:
-            return redirect("/")
-
-        new_contract = Contract(
-            name=data["name"],
-            address=data["address"],
-            email=data["email"],
-            phone=data["phone"],
-            start_date=parse_date(data["start_date"]),
-            due_months=data["due_months"],
-            notes=data["notes"],
-            renewal_date=parse_date(data["renewal_date"]),
-        )
-
-        db.session.add(new_contract)
-        db.session.commit()
+    # Prevent accidental overwrites when editing
+    if "id" in data and data["id"]:
         return redirect("/")
 
-    # Show the blank form on GET
-    return render_template("form.html")
+    new_contract = Contract(
+        name=data["name"],
+        address=data["address"],
+        email=data["email"],
+        phone=data["phone"],
+        start_date=parse_date(data["start_date"]),
+        due_months=data["due_months"],
+        notes=data["notes"],
+        renewal_date=parse_date(data["renewal_date"]),
+    )
 
-def send_email_reminder(to_email, subject, body):
-    msg = MIMEMultipart()
-    msg["From"] = EMAIL_ADDRESS
-    msg["To"] = to_email
-    msg["Subject"] = subject
+    db.session.add(new_contract)
+    db.session.commit()
 
-    msg.attach(MIMEText(body, "plain"))
+    # ✅ Send email reminder
+    send_email_reminder(
+        to_email="johnny@giotechclimatesolutions.com",  # Or use data["email"] if emailing clients
+        subject="New HVAC Contract Added",
+        body=f"A new contract was added for {new_contract.name}.\nStart Date: {new_contract.start_date}\nRenewal Date: {new_contract.renewal_date}"
+    )
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        server.send_message(msg)
+    return redirect("/")
 
 @app.route("/")
 def index():
