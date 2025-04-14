@@ -40,7 +40,6 @@ def add():
         except ValueError:
             return None
 
-    # Prevent accidental overwrites when editing
     if "id" in data and data["id"]:
         return redirect("/")
 
@@ -52,18 +51,19 @@ def add():
         start_date=parse_date(data["start_date"]),
         due_months=data["due_months"],
         notes=data["notes"],
-        renewal_date=parse_date(data["renewal_date"]),
+        renewal_date=parse_date(data["renewal_date"])
     )
 
     db.session.add(new_contract)
     db.session.commit()
 
-    # ✅ Send email reminder
+    # ✅ Send internal email reminder
     send_email_reminder(
-        to_email="johnny@giotechclimatesolutions.com",  # Or use data["email"] if emailing clients
+        to_email="johnny@giotechclimatesolutions.com",
         subject="New HVAC Contract Added",
         body=f"A new contract was added for {new_contract.name}.\nStart Date: {new_contract.start_date}\nRenewal Date: {new_contract.renewal_date}"
     )
+    print("📬 Email function triggered")
 
     return redirect("/")
 
