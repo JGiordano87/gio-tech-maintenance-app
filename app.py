@@ -38,6 +38,7 @@ def add_contract():
             email = request.form.get("email", "").strip()
             phone = request.form.get("phone", "").strip()
             frequency = request.form.get("frequency", "").strip()
+            frequency = db.Column(db.String(100))
             due_months = request.form.getlist("due_months")
             renewal_month = request.form.get("renewal_month", "").strip()
             notes = request.form.get("notes", "").strip()
