@@ -78,19 +78,19 @@ def add_contract():
                 renewal_month=renewal_month
             )
                 start_date=start_date,
-            db.session.add(new_contract)
-            db.session.commit()
+                db.session.add(new_contract)
+        db.session.commit()
 
-            # Send email if contract is due this month
-            send_reminders_for_contract(new_contract)
+        send_email(
+            subject="New HVAC Contract Added",
+            body=f"Contract for {name} has been added.",
+            recipient="johnny@giotechclimatesolutions.com"
+        )
 
-            send_email(
-           subject="New HVAC Contract Added",
-           body=f"Contract for {name} has been added.",
-           recipient="johnny@giotechclimatesolutions.com"
-           )
+        send_reminders_for_contract(new_contract)
 
-            return redirect(url_for("index"))
+        return redirect(url_for("index"))
+
         except Exception as e:
             print(f"❌ Error in /add: {e}")
             return "Error saving contract", 500
