@@ -247,7 +247,7 @@ def send_reminders_for_contract(contract):
     current_month_number = datetime.now().strftime("%m")  # e.g., "04"
 
     # Send HVAC service reminder
-    if due_months and current_month in due_months:
+    if due_months and current_month in due_months.split("-"):
         send_email_reminder(
             to_email="johnny@giotechclimatesolutions.com",
             subject=f"HVAC Maintenance Due - {name}",
