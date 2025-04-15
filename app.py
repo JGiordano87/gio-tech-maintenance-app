@@ -81,11 +81,14 @@ def add_contract():
             db.session.add(new_contract)
             db.session.commit()
 
+            # Send email if contract is due this month
+            send_reminders_for_contract(new_contract)
+
             send_email(
-                subject="New HVAC Contract Added",
-                body=f"Contract for {name} has been added.",
-                recipient="johnny@giotechclimatesolutions.com"
-            )
+           subject="New HVAC Contract Added",
+           body=f"Contract for {name} has been added.",
+           recipient="johnny@giotechclimatesolutions.com"
+           )
 
             return redirect(url_for("index"))
         except Exception as e:
