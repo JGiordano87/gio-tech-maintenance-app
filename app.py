@@ -49,7 +49,7 @@ def add_contract():
                 email=email,
                 phone=phone,
                 due_months=".".join(due_months),
-                renewal_date=parse_renewal_date(renewal_month),
+                renewal_date = parse_date(request.form.get("renewal_date", ""))
                 notes=notes
             )
 
