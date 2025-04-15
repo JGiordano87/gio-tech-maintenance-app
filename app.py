@@ -49,70 +49,48 @@ def send_email(subject, body, recipient):
 @app.route("/add", methods=["GET", "POST"])
 def add_contract():
     if request.method == "POST":
-try:
-    name = request.form.get("name", "").strip()
-    email = request.form.get("email", "").strip()
-    phone = request.form.get("phone", "").strip()
-    due_months = request.form.getlist("due_months")
-    renewal_month = request.form.get("renewal_month", "").strip()
-    notes = request.form.get("notes", "").strip()
-    start_date = parse_date(request.form.get("start_date", ""))
+        try:
+            name = request.form.get("name", "").strip()
+            email = request.form.get("email", "").strip()
+            phone = request.form.get("phone", "").strip()
+            due_months = request.form.getlist("due_months")
+            renewal_month = request.form.get("renewal_month", "").strip()
+            notes = request.form.get("notes", "").strip()
+            start_date = parse_date(request.form.get("start_date", ""))
+            renewal_date = parse_date(request.form.get("renewal_date", ""))
 
-    if not name:
-        return "Client name is required", 400
+            if not name:
+                return "Client name is required", 400
 
-    new_contract = Contract(
-        name=name,
-        email=email,
-        phone=phone,
-        due_months="-".join(due_months),
-        renewal_date=parse_date(request.form.get("renewal_date", "")),
-        notes=notes,
-        renewal_month=renewal_month,
-        start_date=start_date
-    )
+            new_contract = Contract(
+                name=name,
+                email=email,
+                phone=phone,
+                due_months="-".join(due_months),
+                renewal_month=renewal_month,
+                notes=notes,
+                start_date=start_date,
+                renewal_date=renewal_date
+            )
 
-    db.session.add(new_contract)
-    db.session.commit()
+            db.session.add(new_contract)
+            db.session.commit()
 
-    send_email(
-        subject="New HVAC Contract Added",
-        body=f"Contract for {name} has been added.",
-        recipient="johnny@giotechclimatesolutions.com"
-    )
+            send_email(
+                subject="New HVAC Contract Added",
+                body=f"Contract for {name} has been added.",
+                recipient="johnny@giotechclimatesolutions.com"
+            )
 
-    send_reminders_for_contract(new_contract)
+            send_reminders_for_contract(new_contract)
 
-    return redirect(url_for("index"))
+            return redirect(url_for("index"))
 
-except Exception as e:
-    print(f"❌ Error in /add: {e}")
-    return "Error saving contract", 500
+        except Exception as e:
+            print(f"❌ Error in /add: {e}")
+            return "Error saving contract", 500
 
-@app.route("/")
-def index():
-    contracts = Contract.query.with_entities(Contract.id, Contract.name).all()
-    return render_template("index.html", contracts=contracts)
-
-from datetime import datetime
-
-from datetime import datetime  # Make sure this is imported at the top
-
-# Email Reminder Function
-def send_email_reminder(to_email, subject, body):
-    try:
-        msg = MIMEMultipart()
-        msg["From"] = EMAIL_ADDRESS
-        msg["To"] = to_email
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain"))
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.send_message(msg)
-        print("✅ Email sent!")
-    except Exception as e:
-        print("❌ Email failed:", e)
+    return render_template("form.html")
 
 @app.route("/contract/<int:id>")
 def view_contract(id):
