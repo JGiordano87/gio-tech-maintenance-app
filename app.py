@@ -46,6 +46,11 @@ def send_email(subject, body, recipient):
     except Exception as e:
         print("❌ Email failed:", e)
 
+@app.route("/")
+def index():
+    contracts = Contract.query.order_by(Contract.name).all()
+    return render_template("index.html", contracts=contracts)
+
 @app.route("/add", methods=["GET", "POST"])
 def add_contract():
     if request.method == "POST":
