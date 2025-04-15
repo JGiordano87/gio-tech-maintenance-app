@@ -31,6 +31,21 @@ class Contract(db.Model):
     renewal_date = db.Column(db.Date)
     renewal_month = db.Column(db.String(10)) 
 
+def send_email(subject, body, recipient):
+    msg = MIMEMultipart()
+    msg["From"] = EMAIL_ADDRESS
+    msg["To"] = recipient
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain"))
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+            print("✅ Email sent!")
+    except Exception as e:
+        print("❌ Email failed:", e)
+
 @app.route("/add", methods=["GET", "POST"])
 def add_contract():
     if request.method == "POST":
