@@ -213,12 +213,14 @@ def send_reminders():
 
 @app.route("/init-db")
 def init_db():
-    print("Dropping and initializing the database...")
+    print("Force-dropping contracts table...")
     with app.app_context():
-        db.drop_all()  # <-- This will remove old table
+        from sqlalchemy import text
+        db.session.execute(text("DROP TABLE IF EXISTS contracts"))
+        db.session.commit()
         db.create_all()
-        print("Database tables recreated.")
-    return "Database reinitialized!"
+        print("Recreated all tables.")
+    return "Database wiped and reinitialized!"
 
 def send_reminders_for_contract(contract):
     name = contract.name
