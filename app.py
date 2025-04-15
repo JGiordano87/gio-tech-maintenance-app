@@ -29,6 +29,7 @@ class Contract(db.Model):
     due_months = db.Column(db.String(100))
     notes = db.Column(db.Text)
     renewal_date = db.Column(db.Date)
+    renewal_month = db.Column(db.String(10)) 
 
 @app.route("/add", methods=["GET", "POST"])
 def add_contract():
