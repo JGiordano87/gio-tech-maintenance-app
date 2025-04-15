@@ -213,11 +213,12 @@ def send_reminders():
 
 @app.route("/init-db")
 def init_db():
-    print("Initializing the database...")  # <-- Log marker
+    print("Dropping and initializing the database...")
     with app.app_context():
+        db.drop_all()  # <-- This will remove old table
         db.create_all()
-        print("Database tables created.")  # <-- Log marker
-    return "Database initialized!"
+        print("Database tables recreated.")
+    return "Database reinitialized!"
 
 def send_reminders_for_contract(contract):
     name = contract.name
