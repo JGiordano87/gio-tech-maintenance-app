@@ -33,25 +33,25 @@ class Contract(db.Model):
 @app.route("/add", methods=["GET", "POST"])
 def add_contract():
     if request.method == "POST":
-        try:
-            name = request.form.get("name", "").strip()
-            email = request.form.get("email", "").strip()
-            phone = request.form.get("phone", "").strip()
-            due_months = request.form.getlist("due_months")
-            renewal_month = request.form.get("renewal_month", "").strip()
-            notes = request.form.get("notes", "").strip()
+    try:
+        # ... your existing code ...
 
-            if not name:
-                return "Client name is required", 400
+        def parse_date(value):
+            try:
+                return datetime.strptime(value, "%Y-%m-%d").date()
+            except (ValueError, TypeError):
+                return None
 
-            new_contract = Contract(
-                name=name,
-                email=email,
-                phone=phone,
-                due_months=".".join(due_months),
-                renewal_date = parse_date(request.form.get("renewal_date", ""))
-                notes=notes
-            )
+        new_contract = Contract(
+            name=name,
+            email=email,
+            phone=phone,
+            due_months=".".join(due_months),
+            renewal_month=renewal_month,
+            notes=notes,
+            renewal_date=parse_date(request.form.get("renewal_date", ""))
+        )
+        # ... rest of your code ...
 
             db.session.add(new_contract)
             db.session.commit()
