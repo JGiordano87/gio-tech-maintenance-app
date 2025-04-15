@@ -37,8 +37,6 @@ def add_contract():
             name = request.form.get("name", "").strip()
             email = request.form.get("email", "").strip()
             phone = request.form.get("phone", "").strip()
-            frequency = request.form.get("frequency", "").strip()
-            frequency = db.Column(db.String(100))
             due_months = request.form.getlist("due_months")
             renewal_month = request.form.get("renewal_month", "").strip()
             notes = request.form.get("notes", "").strip()
@@ -47,18 +45,16 @@ def add_contract():
                 return "Client name is required", 400
 
             new_contract = Contract(
-            name=name,
-            email=email,
-            phone=phone,
-            frequency=frequency,
-            due_months=".".join(due_months),
-            renewal_month=renewal_month,
-            notes=notes
-           )
+                name=name,
+                email=email,
+                phone=phone,
+                due_months=".".join(due_months),
+                renewal_date=parse_renewal_date(renewal_month),
+                notes=notes
+            )
 
             db.session.add(new_contract)
             db.session.commit()
-            send_reminders_for_contract(new_contract)
 
             send_email(
                 subject="New HVAC Contract Added",
@@ -66,9 +62,11 @@ def add_contract():
                 recipient="johnny@giotechclimatesolutions.com"
             )
 
+            send_reminders_for_contract(new_contract)
+
             return redirect(url_for("index"))
         except Exception as e:
-            print(f"Error in /add: {e}")
+            print(f"❌ Error in /add: {e}")
             return "Internal Server Error", 500
 
     return render_template("form.html")
