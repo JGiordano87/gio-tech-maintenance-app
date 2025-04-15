@@ -64,7 +64,7 @@ def add_contract():
             due_months = request.form.getlist("due_months")
             renewal_month = request.form.get("renewal_month", "").strip()
             notes = request.form.get("notes", "").strip()
-
+            start_date = parse_date(request.form.get("start_date", ""))
             if not name:
                 return "Client name is required", 400
 
@@ -77,7 +77,7 @@ def add_contract():
                 notes=notes,
                 renewal_month=renewal_month
             )
-
+                start_date=start_date,
             db.session.add(new_contract)
             db.session.commit()
 
