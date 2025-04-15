@@ -50,6 +50,13 @@ def send_email(subject, body, recipient):
 def add_contract():
     if request.method == "POST":
         try:
+            # 🔧 Add this helper function to parse date safely
+            def parse_date(value):
+                try:
+                    return datetime.strptime(value, "%Y-%m-%d").date()
+                except (ValueError, TypeError):
+                    return None
+
             name = request.form.get("name", "").strip()
             email = request.form.get("email", "").strip()
             phone = request.form.get("phone", "").strip()
@@ -76,12 +83,14 @@ def add_contract():
             db.session.add(new_contract)
             db.session.commit()
 
+            # Send new contract email
             send_email(
                 subject="New HVAC Contract Added",
                 body=f"Contract for {name} has been added.",
                 recipient="johnny@giotechclimatesolutions.com"
             )
 
+            # 🧠 This triggers the due/renewal reminders for the new client
             send_reminders_for_contract(new_contract)
 
             return redirect(url_for("index"))
