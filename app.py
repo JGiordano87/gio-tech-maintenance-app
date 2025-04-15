@@ -49,8 +49,7 @@ def send_email(subject, body, recipient):
 @app.route("/add", methods=["GET", "POST"])
 def add_contract():
     if request.method == "POST":
-        try:
-    # Parse form inputs
+try:
     name = request.form.get("name", "").strip()
     email = request.form.get("email", "").strip()
     phone = request.form.get("phone", "").strip()
@@ -58,7 +57,7 @@ def add_contract():
     renewal_month = request.form.get("renewal_month", "").strip()
     notes = request.form.get("notes", "").strip()
     start_date = parse_date(request.form.get("start_date", ""))
-    
+
     if not name:
         return "Client name is required", 400
 
@@ -76,14 +75,12 @@ def add_contract():
     db.session.add(new_contract)
     db.session.commit()
 
-    # Send "new contract added" email
     send_email(
         subject="New HVAC Contract Added",
         body=f"Contract for {name} has been added.",
         recipient="johnny@giotechclimatesolutions.com"
     )
 
-    # Send due/renewal reminders for new contract
     send_reminders_for_contract(new_contract)
 
     return redirect(url_for("index"))
@@ -91,36 +88,6 @@ def add_contract():
 except Exception as e:
     print(f"❌ Error in /add: {e}")
     return "Error saving contract", 500
-
-
-    new_contract = Contract(
-        name=name,
-        email=email,
-        phone=phone,
-        due_months="-".join(due_months),
-        renewal_date=parse_date(request.form.get("renewal_date", "")),
-        notes=notes,
-        renewal_month=renewal_month,
-        start_date=start_date  # <-- now properly indented
-    )
-
-        db.session.commit()
-
-        send_email(
-            subject="New HVAC Contract Added",
-            body=f"Contract for {name} has been added.",
-            recipient="johnny@giotechclimatesolutions.com"
-        )
-
-        send_reminders_for_contract(new_contract)
-
-        return redirect(url_for("index"))
-
-        except Exception as e:
-            print(f"❌ Error in /add: {e}")
-            return "Error saving contract", 500
-
-    return render_template("form.html")
 
 @app.route("/")
 def index():
