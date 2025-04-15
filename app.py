@@ -68,17 +68,17 @@ def add_contract():
             if not name:
                 return "Client name is required", 400
 
-            new_contract = Contract(
-                name=name,
-                email=email,
-                phone=phone,
-                due_months=".".join(due_months),
-                renewal_date=parse_date(request.form.get("renewal_date", "")),
-                notes=notes,
-                renewal_month=renewal_month
-            )
-                start_date=start_date,
-                db.session.add(new_contract)
+    new_contract = Contract(
+        name=name,
+        email=email,
+        phone=phone,
+        due_months="-".join(due_months),
+        renewal_date=parse_date(request.form.get("renewal_date", "")),
+        notes=notes,
+        renewal_month=renewal_month,
+        start_date=start_date  # <-- now properly indented
+    )
+
         db.session.commit()
 
         send_email(
